@@ -1,0 +1,35 @@
+```idl
+// Data Structures
+struct Calculation {
+    float number1;             // The first operand
+    float number2;             // The second operand
+    string operation;          // The operation to perform: "+", "-", "*", "/"
+    float result;              // The result of the calculation
+    string formattedResult;    // The formatted string representation of the result
+}
+
+struct CalculationHistory {
+    sequence<Calculation> entries; // List of past calculations
+}
+
+// Interface Definitions
+interface CalculatorInterface {
+    void run();                           // Starts the calculator loop
+    Calculation calculate(float number1, float number2, string operation) raises(DivisionByZeroError); // Performs the calculation
+    CalculationHistory getHistory();      // Retrieves the history of calculations
+    void clearHistory();                  // Clears the history of calculations
+}
+
+// Type Definitions
+typedef string Operation;                // Represents the mathematical operation as a string
+typedef float Number;                    // Represents a number used in calculations
+
+// Error Specifications
+exception DivisionByZeroError {
+    string message;                      // Error message explaining the division by zero
+    float number1;                      // The numerator that was attempted to be divided
+    float number2;                      // The denominator that caused the error
+}
+```
+
+This IDL specification captures all aspects of the requirements for the calculator application, ensuring data structures, interface methods, type definitions, and error management are comprehensive and well-defined.

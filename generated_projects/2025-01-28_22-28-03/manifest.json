@@ -1,0 +1,1 @@
+{"name":"calculator-api","language":"Go","implementation_file":"cmd/calculator/main.go","test_file":"cmd/calculator/main_test.go","docs_file":"docs/README.md","interface_file":"pkg/calculator/calculator.go"}

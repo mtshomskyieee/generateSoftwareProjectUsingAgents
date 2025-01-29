@@ -1,0 +1,8 @@
+{
+  "name": "CommandLineCalculator",
+  "language": "Python",
+  "implementation_file": "calculator/main.py",
+  "test_file": "calculator/test_calculator.py",
+  "docs_file": "calculator/README.md",
+  "interface_file": "calculator/calculator.py"
+}

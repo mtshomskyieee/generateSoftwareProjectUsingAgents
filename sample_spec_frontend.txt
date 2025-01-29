@@ -1,0 +1,18 @@
+Create the following using HTML and javascript :
+Build a simple fronte end calculator application that supports basic
+arithmetic operations (addition, subtraction, multiplication, division) input from
+the input /calculate. Use javascript to connect inputs from the page, calculate the results and present results.
+
+The calculator should:
+
+0. Have a run method that will loop and ask the user for 2 inputs and an operation upon which to calculate
+1. Accept two numbers and an operation as input
+2. Perform the requested calculation
+3. Handle division by zero gracefully
+4. Support continuous calculations until the user chooses to exit
+5. Display results with proper formatting
+6. Maintain a history of calculations
+7. Maintain a run which will loop and ask the user for 2 inputs and an operation
+8. Handle user input that will be calculated
+
+The application should be built using HTML and javascript and follow best practices for maintainability and extensibility.

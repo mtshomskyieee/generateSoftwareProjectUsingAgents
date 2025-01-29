@@ -1,0 +1,8 @@
+{
+  "name": "Simple Frontend Calculator",
+  "language": "HTML, JavaScript",
+  "implementation_file": "src/calculator.js",
+  "test_file": "tests/calculator.test.js",
+  "docs_file": "docs/README.md",
+  "interface_file": "src/index.html"
+}

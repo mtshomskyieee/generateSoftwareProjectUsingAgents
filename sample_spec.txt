@@ -1,0 +1,16 @@
+Create the following using the language Python:
+Build a simple looping command-line calculator that takes numbers and operations as the CLI arguments
+this CLI application supports basic arithmetic operations (addition, subtraction, multiplication, division)
+using input from the arguments when the program is invoked. The calculator should:
+
+0. Have a run method that will loop and ask the user for 2 inputs and an operation upon which to calculate
+1. Accept two numbers and an operation as input
+2. Perform the requested calculation
+3. Handle division by zero gracefully
+4. Support continuous calculations until the user chooses to exit
+5. Display results with proper formatting
+6. Maintain a history of calculations
+7. Maintain a run which will loop and ask the user for 2 inputs and an operation
+8. Handle user input that will be calculated
+
+The application should be built using Python and follow object-oriented principles for maintainability and extensibility.
