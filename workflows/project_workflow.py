@@ -123,7 +123,8 @@ class ProjectWorkflow:
 
             # Code Task
             code_task = CodeAgent.create_task(
-                self.code_agent, 
+                self.code_agent,
+                self.project_spec,
                 idl_task.output if hasattr(idl_task, 'output') else "",
                 output_file=implementation_file
             )

@@ -13,12 +13,16 @@ class CodeAgent:
         )
 
     @staticmethod
-    def create_task(agent, idl_spec, output_file=None):
+    def create_task(agent, project_spec, idl_spec, output_file=None):
         if output_file is None:
             output_file = 'src/app.py'
 
         return Task(
-            description=f"""Based on the following IDL specification, implement a complete application:
+            description=f"""Based on the following IDL specification and project specification, implement a complete application:
+            Project Spec:
+            {project_spec}
+            
+            IDL specification
             {idl_spec}
 
             Ensure the implementation:
@@ -34,6 +38,7 @@ class CodeAgent:
             - Proper error handling mechanisms
             - Type hints and docstrings
             - Clean code structure following OOP principles
-            - Implementation of all required functionality""",
+            - Implementation of all required functionality
+            - The output is in plain text with no markdown formatting""",
             output_file=output_file
         )

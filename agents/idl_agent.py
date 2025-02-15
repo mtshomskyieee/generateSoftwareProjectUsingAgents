@@ -23,6 +23,7 @@ class IDLAgent:
             description=f"""Analyze the following project specification and create a detailed IDL:
             {specification}
 
+            If the language does not support IDL the following IDL will appear as comments:
             Your task is to create a comprehensive IDL specification following this template:
 
             // Data Structures
@@ -49,10 +50,12 @@ class IDLAgent:
             3. Necessary type definitions
             4. Error specifications""",
             agent=agent,
-            expected_output="""A complete IDL specification document containing:
+            expected_output="""If the language supports IDL A complete IDL specification document containing:
             - Clearly defined data structures for the project
             - Well-documented interface definitions
             - Appropriate type definitions
-            - Comprehensive error specifications""",
+            - Comprehensive error specifications
+            - The output is in plain text with no markdown formatting
+            If the language does not support IDL, the IDL will appear commented""",
             output_file=output_file
         )

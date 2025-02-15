@@ -24,7 +24,20 @@ Your task is to process this specification and return a JSON string with file st
             Return only the JSON string output from this Python code
             Do not include any additional text or formatting in your response.""",
             agent=agent,
-            expected_output="A valid JSON string containing file paths and language information with the following keys: name, language, implementation_file, test_file, docs_file, interface_file",
+            expected_output="A valid JSON string containing file paths and language information with the following keys:"
+                            " name, language, implementation_file, test_file, docs_file, interface_file,"
+                            "and file-mapping.  file-mapping needs to contain instructions that describes what goes "
+                            "into the file. An example file-mapping for html/javascript would look like this: "
+                            "{\"name\": \"Asteroids Game\", \"language\": \"JavaScript\", \"implementation_file\": "
+                            "\"src/index.html\","
+                            "\"test_file\": \"tests/game.test.js\", \"docs_file\": \"docs/README.md\", "
+                            "\"interface_file\": \"src/idf.js\", "
+                            "\"file-mapping\": {\"src/index.html\": \"contains html with css and javascript\", "
+                            " \"docs/README.md\":\"contains markdown\","
+                            " \"src/idf.js\":\"contains commented javascript\","
+                            " \"tests/game.test.js\":\"contains javascript\","                            
+                            " }} The file-mapping will differ between languages and will identify what a language a "
+                            "file contains",
             output_file='src/manifest.json'
         )
 
@@ -43,7 +56,7 @@ Your task is to process this specification and return a JSON string with file st
         for lang, pattern in language_patterns.items():
             if re.search(pattern, spec):
                 return lang
-        return 'python'  # Default to Python if no specific language is detected
+        return 'python'  # Note: Default to Python if no specific language is detected
 
     @staticmethod
     def get_file_names(language, spec):

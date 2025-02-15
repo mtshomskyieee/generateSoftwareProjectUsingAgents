@@ -26,6 +26,13 @@ class FileHandler:
                 shutil.move(src_file, dest_file)
                 print(f"Moved: {src_file} to {dest_file}")
 
+    def cleanup_directories(self, src_dir):
+            remaining_directories = [f for f in os.listdir(src_dir)]
+            for d in remaining_directories:
+                cleanup_dir = "/".join([src_dir, d])
+                print(f"Move Cleanup: {src_dir}, removing {cleanup_dir}")
+                shutil.rmtree(cleanup_dir,ignore_errors=True)
+
     def read_specification(self, file_path):
         """
         Reads and validates the project specification file.
@@ -82,6 +89,6 @@ class FileHandler:
         # move source to the project directory
         src_directory = './src'
         self.move_files(src_directory, project_dir)
-
+        self.cleanup_directories(src_directory)
 
         return project_dir

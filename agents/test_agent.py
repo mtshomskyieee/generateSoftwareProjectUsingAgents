@@ -32,6 +32,7 @@ class TestAgent:
             - Error handling verification
             - Edge case coverage
             - Integration tests
-            - Documentation of test scenarios""",
+            - Documentation of test scenarios
+            - The output is in plain text with no markdown formatting""",
             output_file=output_file
         )

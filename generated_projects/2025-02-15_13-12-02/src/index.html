@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroids Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { background: black; display: block; }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+// Data Structures
+class Spaceship {
+    constructor() {
+        this.coord_x = window.innerWidth / 2;
+        this.coord_y = window.innerHeight / 2;
+        this.angle = 0;
+        this.thrust = 0;
+        this.shieldActive = false;
+        this.bulletFired = false;
+    }
+}
+
+class Bullet {
+    constructor(x, y, direction) {
+        this.coord_x = x;
+        this.coord_y = y;
+        this.direction = direction;
+    }
+}
+
+class Asteroid {
+    constructor(x, y, size) {
+        this.coord_x = x;
+        this.coord_y = y;
+        this.size = size; // "big" or "small"
+    }
+}
+
+// Game Class
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.context = this.canvas.getContext('2d');
+        this.spaceship = new Spaceship();
+        this.bullet = null;
+        this.asteroids = [];
+        this.isRunning = false;
+        this.initializeCanvas();
+        this.addAsteroids();
+        this.registerKeyEvents();
+    }
+
+    initializeCanvas() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.isRunning = true;
+        requestAnimationFrame(this.updateGame.bind(this));
+    }
+
+    startGame() {
+        this.isRunning = true;
+        requestAnimationFrame(this.updateGame.bind(this));
+    }
+
+    handleKeyPress(key) {
+        switch (key) {
+            case 37: // Left Arrow
+                this.spaceship.angle -= 0.1;
+                break;
+            case 39: // Right Arrow
+                this.spaceship.angle += 0.1;
+                break;
+            case 38: // Up Arrow (Thrust)
+                this.spaceship.thrust = 0.1;
+                break;
+            case 32: // Space (Fire)
+                this.fireBullet();
+                break;
+            case 83: // S (Shield)
+                this.spaceship.shieldActive = true;
+                break;
+            default:
+                break;
+        }
+    }
+
+    registerKeyEvents() {
+        window.addEventListener('keydown', (event) => {
+            this.handleKeyPress(event.keyCode);
+        });
+        window.addEventListener('keyup', (event) => {
+            if (event.keyCode === 38) this.spaceship.thrust = 0; // Stop thrust
+            if (event.keyCode === 83) this.spaceship.shieldActive = false; // Turn off shield
+        });
+    }
+
+    fireBullet() {
+        if (!this.spaceship.bulletFired) {
+            this.bullet = new Bullet(this.spaceship.coord_x, this.spaceship.coord_y, this.spaceship.angle);
+            this.spaceship.bulletFired = true;
+        }
+    }
+
+    updateGame() {
+        if (this.isRunning) {
+            this.updateSpaceship();
+            this.updateBullet();
+            this.updateAsteroids();
+            this.handleCollisions();
+            this.render();
+            requestAnimationFrame(this.updateGame.bind(this));
+        }
+    }
+
+    updateSpaceship() {
+        this.spaceship.coord_x += this.spaceship.thrust * Math.cos(this.spaceship.angle + 30);
+        this.spaceship.coord_y += this.spaceship.thrust * Math.sin(this.spaceship.angle + 30);
+        this.wrapAround(this.spaceship);
+    }
+
+    updateBullet() {
+        if (this.bullet) {
+            this.bullet.coord_x += Math.cos(this.bullet.direction + 30) * 5;
+            this.bullet.coord_y += Math.sin(this.bullet.direction + 30) * 5;
+            if (this.bullet.coord_x < 0 || this.bullet.coord_x > this.canvas.width || 
+                this.bullet.coord_y < 0 || this.bullet.coord_y > this.canvas.height) {
+                this.bullet = null; // Bullet off screen
+                this.spaceship.bulletFired = false;
+            }
+        }
+    }
+
+    updateAsteroids() {
+        for (let asteroid of this.asteroids) {
+            asteroid.coord_x += (Math.random() - 0.5) * 2;
+            asteroid.coord_y += (Math.random() - 0.5) * 2;
+            this.wrapAround(asteroid);
+        }
+    }
+
+    wrapAround(object) {
+        if (object.coord_x < 0) object.coord_x = this.canvas.width;
+        if (object.coord_x > this.canvas.width) object.coord_x = 0;
+        if (object.coord_y < 0) object.coord_y = this.canvas.height;
+        if (object.coord_y > this.canvas.height) object.coord_y = 0;
+    }
+
+    addAsteroids() {
+        for (let i = 0; i < 5; i++) {
+            let size = Math.random() < 0.5 ? "big" : "small";
+            let asteroid = new Asteroid(Math.random() * this.canvas.width, Math.random() * this.canvas.height, size);
+            this.asteroids.push(asteroid);
+        }
+    }
+
+    render() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawSpaceship();
+        this.drawBullet();
+        this.drawAsteroids();
+        this.drawShield();
+    }
+
+    drawSpaceship() {
+        this.context.fillStyle = 'white';
+        this.context.save();
+        this.context.translate(this.spaceship.coord_x, this.spaceship.coord_y);
+        this.context.rotate(this.spaceship.angle);
+        this.context.beginPath();
+        this.context.moveTo(0, -10);
+        this.context.lineTo(-5, 10);
+        this.context.lineTo(5, 10);
+        this.context.closePath();
+        this.context.fill();
+        this.context.restore();
+    }
+
+    drawBullet() {
+        if (this.bullet) {
+            this.context.fillStyle = 'red';
+            this.context.beginPath();
+            this.context.arc(this.bullet.coord_x, this.bullet.coord_y, 5, 0, Math.PI * 2);
+            this.context.fill();
+        }
+    }
+
+    drawAsteroids() {
+        for (let asteroid of this.asteroids) {
+            this.context.fillStyle = 'gray';
+            this.context.beginPath();
+            this.context.arc(asteroid.coord_x, asteroid.coord_y, asteroid.size === "big" ? 20 : 10, 0, Math.PI * 2);
+            this.context.fill();
+        }
+    }
+
+    drawShield() {
+        if (this.spaceship.shieldActive) {
+            this.context.strokeStyle = 'blue';
+            this.context.beginPath();
+            this.context.arc(this.spaceship.coord_x, this.spaceship.coord_y, 25, 0, Math.PI * 2);
+            this.context.stroke();
+        }
+    }
+
+    handleCollisions() {
+        if (this.bullet) {
+            for (let i = 0; i < this.asteroids.length; i++) {
+                let asteroid = this.asteroids[i];
+                let dist = Math.hypot(this.bullet.coord_x - asteroid.coord_x, this.bullet.coord_y - asteroid.coord_y);
+                if (dist < 15) { // Collision threshold
+                    this.bullet = null; // Bullet is destroyed
+                    this.spaceship.bulletFired = false;
+                    if (asteroid.size === "big") {
+                        this.asteroids.splice(i, 1); // Remove asteroid
+                        this.asteroids.push(new Asteroid(asteroid.coord_x + 15, asteroid.coord_y, "small")); // Create small asteroid
+                        this.asteroids.push(new Asteroid(asteroid.coord_x - 15, asteroid.coord_y, "small"));
+                    } else {
+                        this.asteroids.splice(i, 1); // Remove small asteroid
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (this.spaceship.shieldActive) {
+            for (let i = 0; i < this.asteroids.length; i++) {
+                let asteroid = this.asteroids[i];
+                let dist = Math.hypot(this.spaceship.coord_x - asteroid.coord_x, this.spaceship.coord_y - asteroid.coord_y);
+                if (dist < 25) { // Collision threshold for shield
+                    this.asteroids.splice(i, 1); // Destroy asteroid
+                    break;
+                }
+            }
+        }
+    }
+}
+
+const game = new Game();
+
+</script>
+</body>
+</html>
