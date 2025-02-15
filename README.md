@@ -13,7 +13,6 @@
 1. Install the required and optional dependencies:
 ```bash
 pip install crewai langchain openai python-dotenv
-pip install flask sympy
 ```
 
 2. Set up your OpenAI API key:
