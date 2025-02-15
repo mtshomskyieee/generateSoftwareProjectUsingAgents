@@ -1,5 +1,8 @@
 # How to Run the Project Generator
 
+## Writups and demo about this here
+- https://medium.com/@mtshomsky/crewai-using-agents-to-code-1ad90190be21
+
 ## Prerequisites
 1. Python 3.6 or higher
 2. Required packages (will be installed automatically):
