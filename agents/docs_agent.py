@@ -5,9 +5,9 @@ class DocsAgent:
     def create():
         return Agent(
             role='Technical Writer',
-            goal='Create clear calculator application documentation',
+            goal='Create application documentation',
             backstory="""You are a technical writer specialized in creating user-friendly
-            documentation for command-line tools. You excel at explaining mathematical
+            documentation for any software project using command-line tools. You excel at explaining any
             concepts and software usage clearly.""",
             tools=[],
             verbose=True
@@ -19,7 +19,7 @@ class DocsAgent:
             output_file = 'docs/README.md'
 
         return Task(
-            description=f"""Create comprehensive documentation for the calculator application:
+            description=f"""Create comprehensive documentation for the application:
             {project_info}
 
             Documentation should include:
@@ -29,7 +29,7 @@ class DocsAgent:
             4. Error handling guide
             5. History feature usage""",
             agent=agent,
-            expected_output="""Complete calculator documentation including:
+            expected_output="""Complete documentation including:
             - Clear installation instructions
             - Detailed operation guide
             - Example calculations

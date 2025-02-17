@@ -3,6 +3,7 @@ from agents.idl_agent import IDLAgent
 from agents.code_agent import CodeAgent
 from agents.test_agent import TestAgent
 from agents.docs_agent import DocsAgent
+from agents.run_agent import RunAgent
 from agents.manifest_agent import ManifestAgent
 from utils.project_validator import ProjectValidator
 from utils.file_handler import FileHandler
@@ -38,6 +39,7 @@ class ProjectWorkflow:
         self.manifest_agent = ManifestAgent.create()
         self.idl_agent = IDLAgent.create()
         self.code_agent = CodeAgent.create()
+        self.run_agent = RunAgent.create()
         self.test_agent = TestAgent.create()
         self.docs_agent = DocsAgent.create()
         logger.info("Agents initialized successfully")
@@ -93,12 +95,14 @@ class ProjectWorkflow:
             test_file = manifest_data.get('test_file', 'src/test_app.py')
             docs_file = manifest_data.get('docs_file', 'src/README.md')
             interface_file = manifest_data.get('interface_file', 'src/app.idl')
+            run_script_file = manifest_data.get('run_script', 'build_and_run.sh')
 
             relative_project_directory = "./src"
             implementation_file = relative_project_directory + '/' + implementation_file
             test_file = relative_project_directory + '/' + test_file
             docs_file = relative_project_directory + '/' + docs_file
             interface_file = relative_project_directory + '/' + interface_file
+            run_script_file =  relative_project_directory + '/' + run_script_file
 
 
             logger.info(f"--------------------------------------------")
@@ -106,12 +110,14 @@ class ProjectWorkflow:
             logger.info(f"test_file file: {test_file}")
             logger.info(f"docs_file file: {docs_file}")
             logger.info(f"interface_file file: {interface_file}")
+            logger.info(f"run_script_file file: {run_script_file}")
 
             # Create required directories            
             os.makedirs(os.path.dirname(implementation_file), exist_ok=True)
             os.makedirs(os.path.dirname(test_file), exist_ok=True)
             os.makedirs(os.path.dirname(docs_file), exist_ok=True)
             os.makedirs(os.path.dirname(interface_file), exist_ok=True)
+            os.makedirs(os.path.dirname(run_script_file), exist_ok=True)
 
             # IDL Task
             idl_task = IDLAgent.create_task(
@@ -129,6 +135,15 @@ class ProjectWorkflow:
                 output_file=implementation_file
             )
             logger.info("Code task created")
+
+            # Run Task
+            run_task = RunAgent.create_task(
+                self.code_agent,
+                self.project_spec,
+                idl_task.output if hasattr(idl_task, 'output') else "",
+                output_file=run_script_file
+            )
+            logger.info("run task created")
 
             # Test Task
             test_task = TestAgent.create_task(
@@ -151,8 +166,8 @@ class ProjectWorkflow:
 
             # Create crew for remaining tasks
             crew = Crew(
-                agents=[self.idl_agent, self.code_agent, self.test_agent, self.docs_agent],
-                tasks=[idl_task, code_task, test_task, docs_task],
+                agents=[self.idl_agent, self.code_agent, self.test_agent, self.docs_agent, self.run_agent],
+                tasks=[idl_task, code_task, test_task, docs_task, run_task],
                 verbose=True
             )
 
@@ -226,6 +241,12 @@ class ProjectWorkflow:
                 Write tests for the new feature"""
             )
 
+            run_task = RunAgent.create_task(
+                self.run_agent,
+                self.project_spec,
+                idl_task.output if hasattr(idl_task, 'output') else ""
+            )
+
             docs_task = DocsAgent.create_task(
                 self.docs_agent,
                 f"""Update documentation with:
@@ -236,8 +257,8 @@ class ProjectWorkflow:
 
             # Create crew for feature addition
             crew = Crew(
-                agents=[self.code_agent, self.test_agent, self.docs_agent],
-                tasks=[code_task, test_task, docs_task],
+                agents=[self.code_agent, self.test_agent, self.docs_agent, self.run_agent],
+                tasks=[code_task, test_task, docs_task, run_task],
                 verbose=True
             )
 

@@ -25,15 +25,16 @@ Your task is to process this specification and return a JSON string with file st
             Do not include any additional text or formatting in your response.""",
             agent=agent,
             expected_output="A valid JSON string containing file paths and language information with the following keys:"
-                            " name, language, implementation_file, test_file, docs_file, interface_file,"
+                            " name, language, implementation_file, test_file, docs_file, interface_file, run_script, "
                             "and file-mapping.  file-mapping needs to contain instructions that describes what goes "
                             "into the file. An example file-mapping for html/javascript would look like this: "
                             "{\"name\": \"Asteroids Game\", \"language\": \"JavaScript\", \"implementation_file\": "
                             "\"src/index.html\","
                             "\"test_file\": \"tests/game.test.js\", \"docs_file\": \"docs/README.md\", "
-                            "\"interface_file\": \"src/idf.js\", "
+                            "\"interface_file\": \"src/idf.js\", \"run_script\": \"build_and_run.sh\","
                             "\"file-mapping\": {\"src/index.html\": \"contains html with css and javascript\", "
                             " \"docs/README.md\":\"contains markdown\","
+                            " \"build_and_run.sh\":\"contains a bash script to install dependencies and run\","
                             " \"src/idf.js\":\"contains commented javascript\","
                             " \"tests/game.test.js\":\"contains javascript\","                            
                             " }} The file-mapping will differ between languages and will identify what a language a "
