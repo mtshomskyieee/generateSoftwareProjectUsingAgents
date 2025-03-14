@@ -33,6 +33,7 @@ class TestAgent:
             - Edge case coverage
             - Integration tests
             - Documentation of test scenarios
-            - The output is in plain text with no markdown formatting""",
+            - The file is plain text, it isn't markdown
+            - Plain Text, remove Markdown""",
             output_file=output_file
         )

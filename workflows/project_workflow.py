@@ -4,6 +4,7 @@ from agents.code_agent import CodeAgent
 from agents.test_agent import TestAgent
 from agents.docs_agent import DocsAgent
 from agents.run_agent import RunAgent
+from agents.review_agent import ReviewAgent
 from agents.manifest_agent import ManifestAgent
 from utils.project_validator import ProjectValidator
 from utils.file_handler import FileHandler
@@ -11,6 +12,10 @@ import json
 import logging
 import sys
 import os
+
+## We're working locally, so we turn off telemetry to 'telemetry.crewai.com`
+os.environ["OTEL_SDK_DISABLED"] = "true"
+
 
 # Configure logging
 logging.basicConfig(
@@ -42,6 +47,8 @@ class ProjectWorkflow:
         self.run_agent = RunAgent.create()
         self.test_agent = TestAgent.create()
         self.docs_agent = DocsAgent.create()
+        # New review agent
+        self.review_agent = ReviewAgent.create()
         logger.info("Agents initialized successfully")
 
     def execute(self):
@@ -86,7 +93,8 @@ class ProjectWorkflow:
                     "implementation_file": "src/app.py",
                     "test_file": "tests/test_app.py",
                     "docs_file": "docs/README.md",
-                    "interface_file": "src/app.idl"
+                    "interface_file": "src/app.idl",
+                    "run_script": "build_and_run.sh",
                 }
                 logger.info(f"Using default manifest data: {manifest_data}")
 
@@ -131,14 +139,14 @@ class ProjectWorkflow:
             code_task = CodeAgent.create_task(
                 self.code_agent,
                 self.project_spec,
-                idl_task.output if hasattr(idl_task, 'output') else "",
+                idl_task.output if hasattr(idl_task, "output") else "",
                 output_file=implementation_file
             )
             logger.info("Code task created")
 
             # Run Task
             run_task = RunAgent.create_task(
-                self.code_agent,
+                self.run_agent,
                 self.project_spec,
                 idl_task.output if hasattr(idl_task, 'output') else "",
                 output_file=run_script_file
@@ -171,10 +179,45 @@ class ProjectWorkflow:
                 verbose=True
             )
 
-            # Execute the workflow and get results
-            logger.info("Executing crew tasks")
-            results = crew.kickoff()
-            logger.info("Crew tasks completed")
+            # Introduce a review loop (i.e. iterative review until approved or a maximum iteration count)
+            max_review_iterations = 3
+            review_iteration = 0
+            review_approved = False
+
+            while review_iteration < max_review_iterations and not review_approved:
+                # Execute the workflow and get results
+                logger.info("Executing crew tasks")
+                results = crew.kickoff()
+                generated_files = self._process_results(results)
+                logger.info("Crew tasks completed")
+
+                # Using the generated code—here we review the main implementation file.
+                generated_code = generated_files.get(implementation_file, "")
+                if not generated_code:
+                    logger.warning("No generated code was found to review.")
+                    generated_code = ""
+
+                # Create and execute the review task
+                review_task = ReviewAgent.create_task(self.review_agent, generated_code)
+                review_crew = Crew(
+                    agents=[self.review_agent],
+                    tasks=[review_task],
+                    verbose=True
+                )
+                review_result = review_crew.kickoff()
+                review_output = review_result[0] if isinstance(review_result, list) else review_result
+                logger.info(f"Review output:\n{review_output}")
+
+                if "Approved" in review_output:
+                    review_approved = True
+                    logger.info("Code review approved the generated code.")
+                else:
+                    logger.info("Code review requested revisions. Re-running generation tasks with feedback...")
+                    # (Optionally, you could incorporate the review feedback in subsequent iterations.)
+                    review_iteration += 1
+
+            if not review_approved:
+                logger.warning("Maximum review iterations reached. Proceeding with the last generated files.")
 
             # Process and save generated files
             logger.info("Processing and saving generated files")

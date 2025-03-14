@@ -1,0 +1,16 @@
+{
+  "name": "Asteroids Game",
+  "language": "JavaScript",
+  "implementation_file": "src/index.html",
+  "test_file": "tests/game.test.js",
+  "docs_file": "docs/README.md",
+  "interface_file": "src/game.js",
+  "run_script": "scripts/build_and_run.sh",
+  "file-mapping": {
+    "src/index.html": "contains HTML structure and links to CSS and JavaScript files",
+    "src/game.js": "contains the JavaScript implementation for the game logic, including spaceship and asteroid behavior",
+    "tests/game.test.js": "contains the unit tests for the game functionality and logic",
+    "docs/README.md": "contains project documentation including how to run the game and features",
+    "scripts/build_and_run.sh": "contains a bash script to install dependencies and run the project"
+  }
+}

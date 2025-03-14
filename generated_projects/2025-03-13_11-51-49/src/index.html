@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroids Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            background: black;
+        }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+// Data Structures  
+function Spaceship() {
+    this.positionX = window.innerWidth / 2;
+    this.positionY = window.innerHeight / 2;
+    this.angle = 0; // in radians
+    this.isShieldActive = false;
+    this.bulletActive = false;
+}
+
+function Bullet() {
+    this.positionX = 0;
+    this.positionY = 0;
+    this.direction = 0; // in radians
+}
+
+function Asteroid(size, x, y) {
+    this.positionX = x;
+    this.positionY = y;
+    this.size = size; // can be 'BIG' or 'SMALL'
+}
+
+// Game Class
+class GameInterface {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.spaceship = new Spaceship();
+        this.asteroids = [];
+        this.bullets = [];
+        this.lastBulletFired = 0;
+        this.spawnAsteroids();
+        this.handleKeyPress();
+        requestAnimationFrame(this.updateGame.bind(this));
+    }
+
+    spawnAsteroids() {
+        for (let i = 0; i < 5; i++) {
+            let size = Math.random() < 0.5 ? 'BIG' : 'SMALL';
+            let x = Math.random() * this.canvas.width;
+            let y = Math.random() * this.canvas.height;
+            this.asteroids.push(new Asteroid(size, x, y));
+        }
+    }
+
+    updateGame() {
+        this.clearCanvas();
+        this.updateAsteroids();
+        this.updateBullets();
+        this.drawSpaceship();
+        this.drawAsteroids();
+        this.drawBullets();
+        this.drawShield();
+
+        requestAnimationFrame(this.updateGame.bind(this));
+    }
+
+    clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    drawSpaceship() {
+        this.ctx.save();
+        this.ctx.translate(this.spaceship.positionX, this.spaceship.positionY);
+        this.ctx.rotate(this.spaceship.angle);
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, -20);
+        this.ctx.lineTo(-10, 10);
+        this.ctx.lineTo(10, 10);
+        this.ctx.closePath();
+        this.ctx.fillStyle = "white";
+        this.ctx.fill();
+        this.ctx.restore();
+    }
+
+    drawShield() {
+        if (this.spaceship.isShieldActive) {
+            this.ctx.beginPath();
+            this.ctx.arc(this.spaceship.positionX, this.spaceship.positionY, 30, 0, Math.PI * 2);
+            this.ctx.strokeStyle = "rgba(0, 255, 0, 0.5)";
+            this.ctx.stroke();
+        }
+    }
+
+    drawAsteroids() {
+        this.asteroids.forEach(asteroid => {
+            this.ctx.beginPath();
+            this.ctx.arc(asteroid.positionX, asteroid.positionY, asteroid.size === 'BIG' ? 30 : 15, 0, Math.PI * 2);
+            this.ctx.fillStyle = "gray";
+            this.ctx.fill();
+        });
+    }
+
+    updateAsteroids() {
+        this.asteroids.forEach(asteroid => {
+            asteroid.positionX += Math.random() * 2 - 1; // drift randomly
+            asteroid.positionY += Math.random() * 2 - 1; // drift randomly
+
+            // wrap around screen
+            if (asteroid.positionX < 0) asteroid.positionX = this.canvas.width;
+            if (asteroid.positionX > this.canvas.width) asteroid.positionX = 0;
+            if (asteroid.positionY < 0) asteroid.positionY = this.canvas.height;
+            if (asteroid.positionY > this.canvas.height) asteroid.positionY = 0;
+        });
+    }
+
+    drawBullets() {
+        this.bullets.forEach(bullet => {
+            this.ctx.beginPath();
+            this.ctx.arc(bullet.positionX, bullet.positionY, 5, 0, Math.PI * 2);
+            this.ctx.fillStyle = "yellow";
+            this.ctx.fill();
+        });
+    }
+
+    updateBullets() {
+        this.bullets.forEach((bullet, index) => {
+            bullet.positionX += Math.cos(bullet.direction) * 5;
+            bullet.positionY += Math.sin(bullet.direction) * 5;
+
+            if (bullet.positionX < 0 || bullet.positionX > this.canvas.width ||
+                bullet.positionY < 0 || bullet.positionY > this.canvas.height) {
+                this.bullets.splice(index, 1); // destroy bullet when off-screen
+            }
+
+            this.checkBulletCollisions(bullet, index);
+        });
+    }
+
+    checkBulletCollisions(bullet, bulletIndex) {
+        this.asteroids.forEach((asteroid, asteroidIndex) => {
+            const dx = bullet.positionX - asteroid.positionX;
+            const dy = bullet.positionY - asteroid.positionY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < (asteroid.size === 'BIG' ? 30 : 15) + 5) {
+                this.handleCollision(bullet, bulletIndex, asteroid, asteroidIndex);
+            }
+        });
+    }
+
+    handleCollision(bullet, bulletIndex, asteroid, asteroidIndex) {
+        if (asteroid.size === 'BIG') {
+            // Create two smaller asteroids
+            this.asteroids.push(new Asteroid('SMALL', asteroid.positionX + 10, asteroid.positionY));
+            this.asteroids.push(new Asteroid('SMALL', asteroid.positionX - 10, asteroid.positionY));
+            this.asteroids.splice(asteroidIndex, 1); // Remove the big asteroid
+        } else {
+            this.asteroids.splice(asteroidIndex, 1); // Remove the small asteroid
+        }
+        this.bullets.splice(bulletIndex, 1); // Remove the bullet
+    }
+
+    handleKeyPress() {
+        window.addEventListener('keydown', (event) => {
+            switch(event.key) {
+                case 'ArrowLeft':
+                    this.spaceship.angle -= 0.1; // Rotate left
+                    break;
+                case 'ArrowRight':
+                    this.spaceship.angle += 0.1; // Rotate right
+                    break;
+                case 'ArrowUp':
+                    this.spaceship.positionX += Math.cos(this.spaceship.angle) * 2;
+                    this.spaceship.positionY += Math.sin(this.spaceship.angle) * 2;
+                    // Wrap around
+                    if (this.spaceship.positionX < 0) this.spaceship.positionX = this.canvas.width;
+                    if (this.spaceship.positionX > this.canvas.width) this.spaceship.positionX = 0;
+                    if (this.spaceship.positionY < 0) this.spaceship.positionY = this.canvas.height;
+                    if (this.spaceship.positionY > this.canvas.height) this.spaceship.positionY = 0;
+                    break;
+                case ' ':
+                    this.fireBullet();
+                    break;
+                case 's':
+                    this.spaceship.isShieldActive = true;
+                    break;
+            }
+        });
+
+        window.addEventListener('keyup', (event) => {
+            if (event.key === 's') {
+                this.spaceship.isShieldActive = false;
+            }
+        });
+    }
+
+    fireBullet() {
+        if (!this.spaceship.bulletActive) {
+            const bullet = new Bullet();
+            bullet.positionX = this.spaceship.positionX;
+            bullet.positionY = this.spaceship.positionY;
+            bullet.direction = this.spaceship.angle;
+            this.bullets.push(bullet);
+            this.spaceship.bulletActive = true;
+        }
+    }
+}
+
+// Start Game
+window.onload = function() {
+    new GameInterface();
+};
+</script>
+</body>
+</html>
