@@ -73,9 +73,12 @@ class FileHandler:
             if directory and not os.path.exists(directory):
                 os.makedirs(directory)
 
-            # Save the file
+            # Save the file - convert content to string if needed
             with open(full_path, 'w') as file:
-                file.write(content)
+                if hasattr(content, 'raw_output'):  # Handle CrewOutput objects
+                    file.write(str(content.raw_output))
+                else:
+                    file.write(str(content))  # Convert any other type to string
 
         # Create a summary file
         summary_path = os.path.join(project_dir, "generation_summary.txt")
@@ -84,7 +87,6 @@ class FileHandler:
             f.write("Generated files:\n")
             for file_path in project_files.keys():
                 f.write(f"- {file_path}\n")
-
 
         # move source to the project directory
         src_directory = './src'

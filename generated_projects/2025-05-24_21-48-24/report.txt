@@ -1,0 +1,21 @@
+Revisions required. 
+
+1. Error Handling: The current implementation primarily handles `ValueError` and custom exceptions. However, to improve user experience, it would be beneficial to provide more specific error messages. For example, if the user enters a non-numeric value, directly indicate that they should enter a numeric value.
+
+2. Documentation: While class docstrings are present, adding method-level docstrings for clarity on parameters and return types would enhance maintainability. For example, details on expected parameter types in `logHistory` and `calculate` could be documented explicitly.
+
+3. Timestamps: The timestamp for each calculation is generated using `datetime.datetime.now()`, which is great. However, explicitly documenting the format used in the timestamp would be useful for anyone extending the code in the future.
+
+4. Method Naming Conventions: The method `displayResult` violates the Python naming convention for methods. It should be renamed to `display_result` to maintain consistency with PEP 8 style guidelines.
+
+5. Exit Message: The exit message logged to the console could be enhanced. Instead of printing "Exiting calculator," it might be more polished to say "Calculator successfully exited," which adds more clarity.
+
+6. Magic Strings: In the `validate_operation` method and elsewhere, operators are hardcoded as strings. It would be better to store these in a constants section at the top of the file for easier modification and readability.
+
+7. Return Type Annotation: The `run` method's return type is currently specified as `None`. Keeping it could be fine, but ensure that its functionality aligns with that of other methods that might be called.
+
+8. Inconsistent Error Handling: Consider uniformity in how exceptions are raised and caught. If `InvalidInputError` is raised in the `calculate` function, it should also be caught in the same scope to maintain consistency in exception handling.
+
+9. Redundant Code: Inconsistent handling of operations in `calculate` could be improved using a dictionary that maps operations to their respective functions. This would streamline the code and reduce repetition.
+
+These suggestions will help improve the software quality, making the codebase more maintainable and user-friendly. Overall, the code demonstrates a good understanding of basic concepts but can benefit from these refinements.

@@ -1,0 +1,17 @@
+Revisions required. 
+
+1. **Error Handling**: The current implementation raises custom exceptions, which is a good practice for specific errors. However, the handling for `ValueError` and `InvalidOperationError` is combined, potentially masking the specific error type for the user. It would be more beneficial to handle these exceptions separately, providing clearer feedback to the user.
+
+2. **User Input Validation**: Currently, the program assumes that the user will input valid float numbers. Additional input validation and proper error messages would improve the user experience, preventing abrupt failures for invalid inputs.
+
+3. **Magic Strings**: The operations are currently coded as string literals within the `calculate()` method. Using constants or an enum for operations would enhance maintainability and reduce the chance of typographical errors.
+
+4. **Redundant `exit` method**: The `exit()` method, while providing a farewell message, could be considered redundant as it does not have a significant independent functionality beyond a print statement. It would suffice to directly print the message and call `break` in the `run()` method.
+
+5. **Docstrings**: The docstrings in the classes are fairly good but should be more descriptive. Including expected parameters and return types in multiline format helps clarify the functionality further.
+
+6. **Type Annotations**: While types are annotated for method parameters and returns, consider adding type hints for attributes in classes, especially in the `Calculator`, `HistoryEntry`, and `Calculation` classes. This aids in type checks and enhances code readability.
+
+7. **History Retrieval Method**: The `get_history` method retrieves the entire history object, which could lead to unintended consequences if the history is modified externally. Consider providing a way to retrieve entries or clear history without exposing the entire history structure.
+
+Addressing these areas can significantly enhance the maintainability, usability, and clarity of the code, ensuring a better overall design that adheres to best practices.

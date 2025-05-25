@@ -1,0 +1,32 @@
+Execution and Testing Report:
+
+1. **Output from Running the Python file (calculator.py)**: 
+   - Execution of `./src/src/calculator.py` – Timed out on multiple attempts.
+
+2. **Results of Running the Tests (test_calculator.py)**: 
+   - Total Tests: 11
+   - Passed: 10
+   - Failed: 1 (`test_empty_history`)
+   - Failure Reason: AttributeError - 'Calculator' object has no attribute 'getHistory'.
+
+3. **Analysis of Failures**: 
+   - The failure in the test was linked to the absence of a `getHistory` method in the `Calculator` class which is intended to return the calculation history.
+
+4. **Suggested Fixes**:
+   - Implement `getHistory()` in the `Calculator` class:
+     ```python
+     def getHistory(self):
+         """Return the history of calculations."""
+         return self.history
+     ```
+   
+5. **Number of Retries Needed**: 
+   - Ran the tests and execution three times each with persistent timeouts and errors.
+
+6. **Final Status**: 
+   - Overall, execution remains unsuccessful, but test results indicate proper functionality for cases aside from the history retrieval.
+
+Actions needed moving forward:
+- Verify the implementation of `calculator.py` and add the missing method.
+- Re-run the tests after modifications to verify success.
+```

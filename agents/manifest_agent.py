@@ -78,14 +78,31 @@ class ManifestAgent:
         }
 
         ext = extensions.get(language, extensions['python'])
-        return {
-            'language': language,
-            'implementation_file': f"src/{base_name}{ext['impl']}",
-            'test_file': f"tests/{base_name}{ext['test']}",
-            'docs_file': f"docs/README{ext['docs']}",
-            'interface_file': f"src/{base_name}{ext['interface']}",
-            'review_file': f"src/review.txt",
-        }
+
+        file_structure = {}
+        if language is not None and language == "python":
+            file_structure = {
+                'language': language,
+                'implementation_file': f"src/{base_name}{ext['impl']}",
+                'test_file': f"tests/{base_name}{ext['test']}",
+                'docs_file': f"docs/README{ext['docs']}",
+                'interface_file': f"src/{base_name}{ext['interface']}",
+                'review_file': f"src/review.txt",
+                'init_file': 'src/__init__.py',
+                'tests_init_file': 'tests/__init__.py',
+            }
+        else:
+            file_structure = {
+                'language': language,
+                'implementation_file': f"src/{base_name}{ext['impl']}",
+                'test_file': f"tests/{base_name}{ext['test']}",
+                'docs_file': f"docs/README{ext['docs']}",
+                'interface_file': f"src/{base_name}{ext['interface']}",
+                'review_file': f"src/review.txt"
+            }
+
+
+        return file_structure
 
     @staticmethod
     def _extract_base_name(spec):

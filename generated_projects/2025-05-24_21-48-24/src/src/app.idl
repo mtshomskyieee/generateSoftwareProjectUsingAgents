@@ -1,0 +1,37 @@
+// Data Structures
+struct Calculation {
+    float num1;
+    float num2;
+    string operation;
+    float result;
+    string timestamp;
+}
+
+struct HistoryEntry {
+    Calculation calculation;
+    string description;
+}
+
+// Interface Definitions
+interface Calculator {
+    void run();
+    float calculate(float num1, float num2, string operation) raises(DivisionByZeroError);
+    void displayResult(float result);
+    void logHistory(Calculation calculation);
+    HistoryEntry[] getHistory();
+}
+
+// Type Definitions
+typedef float Number;
+typedef string Operation;
+
+// Error Specifications
+exception DivisionByZeroError {
+    string message;
+    string operation;
+}
+
+exception InvalidInputError {
+    string message;
+    string invalidValue;
+}

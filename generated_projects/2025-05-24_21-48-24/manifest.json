@@ -1,0 +1,18 @@
+```json
+{
+  "name": "Command Line Calculator",
+  "language": "Python",
+  "implementation_file": "calculator/calculator.py",
+  "test_file": "tests/test_calculator.py",
+  "docs_file": "docs/README.md",
+  "interface_file": "calculator/calculator_interface.py",
+  "run_script": "run_calculator.py",
+  "file-mapping": {
+    "calculator/calculator.py": "contains the main calculator logic and operations",
+    "tests/test_calculator.py": "contains unit tests for the calculator operations",
+    "docs/README.md": "contains the project description and usage instructions",
+    "calculator/calculator_interface.py": "contains the user input handling and output formatting",
+    "run_calculator.py": "contains a script to execute the calculator program"
+  }
+}
+```

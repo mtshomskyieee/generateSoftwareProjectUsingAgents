@@ -24,6 +24,9 @@ pip install crewai langchain openai python-dotenv
    - Create a `.env` file in the root directory
    - Add your OpenAI API key: `OPENAI_API_KEY=your_api_key_here`
 
+3. Run unit tests
+   - ```python -m unittest discover tests```
+
 ## Project Structure
 ```
 

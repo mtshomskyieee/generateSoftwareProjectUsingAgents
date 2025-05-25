@@ -19,15 +19,6 @@ def main():
         result = workflow.execute()
 
         print("\nProject generation completed successfully!")
-        
-        # Feature addition loop
-        while True:
-            add_feature = input("\nWould you like to add more features? (yes/no): ").lower()
-            if add_feature != 'yes':
-                break
-                
-            feature_desc = input("Please describe the new feature: ")
-            workflow.add_feature(feature_desc)
 
     except FileNotFoundError:
         print(f"Error: Specification file '{args.spec_file}' not found.")

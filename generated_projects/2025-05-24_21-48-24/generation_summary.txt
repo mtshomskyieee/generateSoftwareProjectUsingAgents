@@ -1,0 +1,9 @@
+Project generated at: 2025-05-24_21-48-24
+Generated files:
+- ./src/src/app.py
+- ./src/tests/test_app.py
+- ./src/docs/README.md
+- ./src/src/app.idl
+- ./src/build_and_run.sh
+- ./src/src/__init__.py
+- ./src/tests/__init__.py
